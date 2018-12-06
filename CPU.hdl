@@ -39,29 +39,29 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    Mux16(a[15]=false, a[0..14]=instruction[0..14], b=aluOut, sel=instruction[15], out=muxAOut);
+    Mux16(a[15]=false, a[0..14]=instruction[0..14], b=aluOut, sel=instruction[15], out=muxAOut); //Takes in parts of the c instructions and combines it with the ALU output to fund out what to put into the a register
     Not(in=instruction[15], out=aInst);
-    Or(a=aInst, b=instruction[5], out=loadA);
-    ARegister(in=muxAOut, load=loadA, out=aIn, out[0..14]=addressM);
+    Or(a=aInst, b=instruction[5], out=loadA); // processes control bit to be put into A register
+    ARegister(in=muxAOut, load=loadA, out=aIn, out[0..14]=addressM); //Takes in processed control bits and the first mux's output and outputs the adddressM and what goes into the next mux
 
-    Mux16(a=aIn, b=inM, sel=instruction[12], out=aOrM);
+    Mux16(a=aIn, b=inM, sel=instruction[12], out=aOrM); // takes in a registers output and inM to figure out the ALU input
 
-    And(a=instruction[4], b=instruction[15], out=loadD);
-    DRegister(in=aluOut, load=loadD, out=dIn);
+    And(a=instruction[4], b=instruction[15], out=loadD); Processing control bits
+    DRegister(in=aluOut, load=loadD, out=dIn); The alu output and control bit are combined to produce new alu input
 
     ALU(x=dIn, y=aOrM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=aluOut, out=outM, zr=zr, ng=lt);
 
-    And(a=instruction[3], b=instruction[15], out=writeM);
+    And(a=instruction[3], b=instruction[15], out=writeM); //Random processing of two control bits to make writeM
 
-    Or(a=lt, b=zr, out=lte);
-    Not(in=lte, out=gt);
+    Or(a=lt, b=zr, out=lte); //Combines less than and if it is zero to mkae less tahn or equal to 0
+    Not(in=lte, out=gt); //nots the less than or equal to to find greater than
     
-    And(a=instruction[1], b=zr, out=jeq);
+    And(a=instruction[1], b=zr, out=jeq); //combines jump instructions with deteermining bits
     And(a=instruction[2], b=lt, out=jlt);
     And(a=instruction[0], b=gt, out=jgt);     
-    Or(a=jlt, b=jeq, out=jle);
-    Or(a=jle, b=jgt, out=jmp);
-    And(a=instruction[15], b=jmp, out=loadPc);
-    Not(in=loadPc, out=incPc);
-    PC(in=aIn, load=loadPc, inc=incPc, reset=reset, out[0..14]=pc);
+    Or(a=jlt, b=jeq, out=jle); //makes less than or equal to by combining the two
+    Or(a=jle, b=jgt, out=jmp); //combines less than or equal to with greater than to make final jump bit
+    And(a=instruction[15], b=jmp, out=loadPc); //combines control bit with jump to make load bit fot PC
+    Not(in=loadPc, out=incPc); // reverses load bit to determine inc
+    PC(in=aIn, load=loadPc, inc=incPc, reset=reset, out[0..14]=pc); //Uses reset, A register output, load PC, and incPC, to output PC
 }
