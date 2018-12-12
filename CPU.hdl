@@ -46,8 +46,8 @@ CHIP CPU {
 
     Mux16(a=aIn, b=inM, sel=instruction[12], out=aOrM); // takes in a registers output and inM to figure out the ALU input
 
-    And(a=instruction[4], b=instruction[15], out=loadD); Processing control bits
-    DRegister(in=aluOut, load=loadD, out=dIn); The alu output and control bit are combined to produce new alu input
+    And(a=instruction[4], b=instruction[15], out=loadD); //Processing control bits
+    DRegister(in=aluOut, load=loadD, out=dIn); //The alu output and control bit are combined to produce new alu input
 
     ALU(x=dIn, y=aOrM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=aluOut, out=outM, zr=zr, ng=lt);
 
