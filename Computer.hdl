@@ -21,6 +21,6 @@ CHIP Computer {
     PARTS:
     ROM32K(address=pc, out=instruction); // Grabs pc from CPU and puts out an instruction
     CPU(inM=memout, instruction=instruction, reset=reset, outM=outM, writeM=writeM, addressM=addressM, pc=pc); //grabs out from memory, instruction from ROM, and reset from the outside. Then outputs program counter, addressM, outM, and writeM
-    Memory(in=outM, load=writeM, address=addressM, out=memout); takes write, out, and address of M and outputs inM back to the CPU
+    Memory(in=outM, load=writeM, address=addressM, out=memout); //takes write, out, and address of M and outputs inM back to the CPU
     
 }
